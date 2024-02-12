@@ -63,15 +63,29 @@ def gen_english_ranks(infile='pg2701.txt') -> bytearray:
 
 
 def break_single_byte(cbytes: bytearray, eng_ranks: bytearray) -> (int, bytearray):
-    pass  # TODO: Implement this!
+    good_score = 1000000000
+    good_message = bytearray()
+    good_key = 0
+    for key in range(256):
+        message = singleByteXor(cbytes, key)
+        score = english_score(message, eng_ranks)
+        if score < good_score:
+            good_score = score
+            good_message = message
+            good_key = key
+        print(key, score)
+    return good_key, good_message
 
 
 def main():
-    cbytes = read_ctext_file([0b00000000], 'breakme.bin')
+    #ptext = "\n".join(open("pogerts.txt").readlines()) 
+    #write_ctext_file(ptext, [0b10101010], 'battlepass.bin')
+    
+    cbytes = read_ctext_file([0b00000000], 'battlepass.bin')
     eng_ranks = gen_english_ranks()
     key, message = break_single_byte(cbytes, eng_ranks)
-    print(message.decode('utf-8'))
-
+    print(key,"\n", message.decode('utf-8'))
+    
 
 if __name__ == '__main__':
     main()
